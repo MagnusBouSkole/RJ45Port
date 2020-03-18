@@ -1,0 +1,333 @@
+﻿@import url("https://use.typekit.net/aro8mnx.css");
+
+body {
+    background-color: #F0F4F8;
+    font-family: "proxima-nova", sans-serif;
+}
+
+.loader {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: #102A43;
+    text-align: center;
+    color: #fff;
+}
+
+    .loader.close {
+        animation-name: removeLoader;
+        animation-fill-mode: forwards;
+        animation-duration: 0.5s;
+    }
+
+@keyframes removeLoader {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
+.loader .content {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.loader h1 {
+    font-size: 50px;
+    font-weight: 200;
+    margin-bottom: 50px;
+}
+
+.loader h3 {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+
+/*Loader*/
+
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 40px 40px;
+    }
+
+        .lds-roller div:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fff;
+            margin: -4px 0 0 -4px;
+        }
+
+        .lds-roller div:nth-child(1) {
+            animation-delay: -0.036s;
+        }
+
+            .lds-roller div:nth-child(1):after {
+                top: 63px;
+                left: 63px;
+            }
+
+        .lds-roller div:nth-child(2) {
+            animation-delay: -0.072s;
+        }
+
+            .lds-roller div:nth-child(2):after {
+                top: 68px;
+                left: 56px;
+            }
+
+        .lds-roller div:nth-child(3) {
+            animation-delay: -0.108s;
+        }
+
+            .lds-roller div:nth-child(3):after {
+                top: 71px;
+                left: 48px;
+            }
+
+        .lds-roller div:nth-child(4) {
+            animation-delay: -0.144s;
+        }
+
+            .lds-roller div:nth-child(4):after {
+                top: 72px;
+                left: 40px;
+            }
+
+        .lds-roller div:nth-child(5) {
+            animation-delay: -0.18s;
+        }
+
+            .lds-roller div:nth-child(5):after {
+                top: 71px;
+                left: 32px;
+            }
+
+        .lds-roller div:nth-child(6) {
+            animation-delay: -0.216s;
+        }
+
+            .lds-roller div:nth-child(6):after {
+                top: 68px;
+                left: 24px;
+            }
+
+        .lds-roller div:nth-child(7) {
+            animation-delay: -0.252s;
+        }
+
+            .lds-roller div:nth-child(7):after {
+                top: 63px;
+                left: 17px;
+            }
+
+        .lds-roller div:nth-child(8) {
+            animation-delay: -0.288s;
+        }
+
+            .lds-roller div:nth-child(8):after {
+                top: 56px;
+                left: 12px;
+            }
+
+@keyframes lds-roller {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*Loader End */
+
+.ccard {
+    position: relative;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: 0.1s;
+    cursor: pointer;
+}
+
+    .ccard.port {
+        padding-bottom: 60px;
+    }
+
+    .ccard h5 {
+        color: #334E68;
+        font-size: 15px;
+        margin: 0px;
+    }
+
+    .ccard.room h4 {
+        color: #102A43;
+        font-size: 30px;
+    }
+
+    .ccard.port h4 {
+        color: #102A43;
+        font-size: 20px;
+        z-index: 2;
+    }
+
+    .ccard .side {
+        position: absolute;
+        right: -10px;
+        top: -20px;
+        font-size: 130px;
+        color: rgba(0, 0, 0, 0.04);
+        transition: 0.1s;
+    }
+
+    .ccard.port .side {
+        right: 15px;
+        top: 5px;
+        font-size: 70px;
+        color: rgba(0, 0, 0, 0.5);
+    }
+
+    .ccard.port.disconnected .side {
+        color: rgba(0, 0, 0, 0.1);
+    }
+
+    .ccard .status {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        width: 100%;
+        height: 35px;
+        background-color: seagreen;
+        padding: 5px;
+        text-align: center;
+        transition: 0.1s;
+    }
+
+    .ccard.port.open .status {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        width: 50%;
+        height: 100%;
+        background-color: seagreen;
+        padding: 5px;
+        text-align: right;
+        z-index: 1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .ccard.port.disconnected .status {
+        background-color: #D9E2EC;
+    }
+
+    .ccard .status p {
+        margin: 0px;
+        font-size: 15px;
+        color: #fff;
+    }
+
+    .ccard.port.disconnected .status p {
+        color: #243B53;
+    }
+
+.status span.dot {
+    min-height: 10px;
+    min-width: 10px;
+    border-radius: 50%;
+    background-color: green;
+}
+
+.ccard:hover {
+    transform: scale(1.03);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.ccard.room:hover .side {
+    color: rgba(0, 0, 0, 0.08);
+    font-size: 140px;
+}
+
+.port-container {
+    background-color: #F0F4F8;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+    .port-container.open {
+        display: block;
+    }
+
+#port-close {
+    font-size: 30px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.title-row {
+    background-color: #003E6B;
+    padding: 40px 0px;
+    margin-bottom: 50px;
+}
+
+    .title-row h2 {
+        color: #fff;
+        vertical-align: middle;
+        font-weight: 500;
+    }
+
+.list-group.list-group-root {
+    padding: 0;
+    overflow: hidden;
+}
+
+    .list-group.list-group-root .list-group {
+        margin-bottom: 0;
+    }
+
+    .list-group.list-group-root .list-group-item {
+        border-radius: 0;
+        border-width: 1px 0 0 0;
+    }
+
+    .list-group.list-group-root > .list-group-item:first-child {
+        border-top-width: 0;
+    }
+
+    .list-group.list-group-root > .list-group > .list-group-item {
+        padding-left: 30px;
+    }
+
+    .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+        padding-left: 45px;
+    }
+
+.list-group-item .glyphicon {
+    margin-right: 5px;
+}
