@@ -5,21 +5,23 @@ var Section = {
     Name: "",
     Rooms: [{ Room }],
 }
-var Room = {
-    Id: 0,
-    Name: "",
-    Section: 0,
-    Ports: [{ Port }],
-    Section1: Section
-}
-var Port = {
-    Id: 0,
-    SerialCode: "",
-    IsActive: false,
-    IsConnected: false,
-    AssociatedRoom: 0,
-    Room: Room
-}
+function Room(id = 0, name = "", section = 0, ports = null, section1 = null) {
+    this.Id = id;
+    this.Name = name; 
+    this.Section = section;
+    this.Ports = ports;
+    this.Section1 = section1;
+};
+
+function Port(id = 0, SerialCode = "", IsActive = false, IsConnected = false, AssociatedRoom = 0, room = null){
+    this.Id = id;
+    this.SerialCode = SerialCode;
+    this.IsActive = IsActive;
+    this.IsConnected = IsConnected;
+    this.AssociatedRoom = AssociatedRoom;
+    this.room = room;
+};
+
 
 function handleException(request, message, error) {
     $("#errorModal .modal-body").empty().append(`<p>` + message + error + `</p>`);
@@ -30,6 +32,7 @@ function handleException(request, message, error) {
 $(document).ready(function () {
     getSectionList();
     PrepareSettings();
+    $('#settingsModal').modal('show');
 });
 
 function getSectionList() {
@@ -195,22 +198,43 @@ function RenderSettings(sections) {
 
     });
 
-
-
     $("#SettingsMaster").empty().append(output);
-    $('#settingsModal').modal('show');
+    cleanSettingsDetail();
+
 }
 
+function cleanSettingsDetail() {
+    $("#SettingsDetail").empty().append(`
+                            <h2 class="title"></h2>
+                            <div class="form">
+                            </div>
+                            <div class="buttons">
+                            </div>
+
+    `);
+}
+
+
+
+$('#SettingsMaster').on('click', '.list-group-item', function () {
+    $("#SettingsMaster .active").removeClass("active");
+    $(this).addClass("active");
+});
+
 $('#SettingsMaster').on('click', '.settingsRoom', function () {
+    editRoomSetup($(this).data("room-id"));
+});
+
+function editRoomSetup(roomId) {
     $("#SettingsDetail .title").text("");
     $("#SettingsDetail .form").empty();
     $.ajax({
-        url: apiUrl + 'Rooms/' + $(this).data("room-id"),
+        url: apiUrl + 'Rooms/' + roomId,
         type: 'GET',
         dataType: 'json',
         success: function (rooms) {
             $("#SettingsDetail .title").text("Rediger " + rooms.Name);
-            $("#SettingsDetail .buttons").empty().append(`<button type="button" id="save" data-id="` + rooms.Id + `" class="btn btn-primary">Opdater</button>`)
+            $("#SettingsDetail .buttons").empty().append(`<button type="button" id="saveRoom" data-id="` + rooms.Id + `" class="btn btn-primary">Opdater</button><button type="button" id="deleteRoom" data-id="` + rooms.Id + `" class="btn btn-danger">Slet</button>`)
 
             MakeRoomForm(rooms);
         },
@@ -218,15 +242,32 @@ $('#SettingsMaster').on('click', '.settingsRoom', function () {
             handleException(request, message, error);
         }
     });
+}
+
+$('#SettingsMaster').on('click', '.settingsPort', function () {
+    editPortSetup($(this).data("port-id"));
 });
 
-$('#SettingsMaster').on('click', '.list-group-item', function () {
-    $("#SettingsMaster .active").removeClass("active");
-    $(this).addClass("active");
-});
+function editPortSetup(portId) {
+    $("#SettingsDetail .title").text("");
+    $("#SettingsDetail .form").empty();
+    $.ajax({
+        url: apiUrl + 'Ports/' + portId,
+        type: 'GET',
+        dataType: 'json',
+        success: function (port) {
+            $("#SettingsDetail .title").text("Rediger " + port.SerialCode);
+            $("#SettingsDetail .buttons").empty().append(`<button type="button" id="savePort" data-id="` + port.Id + `" class="btn btn-primary">Opdater</button><button type="button" id="deletePort" data-id="` + port.Id + `" class="btn btn-danger">Slet</button>`)
 
+            MakePortForm(port);
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
 
-function MakeRoomForm(room = Room) {
+function MakeRoomForm(room = new Room(0, "")) {
 
     $.ajax({
         url: apiUrl + 'Sections/',
@@ -267,19 +308,85 @@ function MakeRoomForm(room = Room) {
 
 }
 
+function MakePortForm(port = new Port()) {
 
-$('#SettingsDetail').on('click', '#save', function () {
+    $.ajax({
+        url: apiUrl + 'Sections/',
+        type: 'GET',
+        dataType: 'json',
+        success: function (section) {
+
+            var sections = section;
+            console.log(sections);
+            var roomList = ""
+            sections.forEach(section => {
+                roomList += `<optgroup label="`+section.Name+`">`
+                section.Rooms.forEach(room => {
+                    var selected = "";
+                    if (room.Id == port.AssociatedRoom) {
+                        selected = "selected";
+                    };
+                    roomList += `<option value="` + room.Id + `" ` + selected + `>` + room.Name + `</option>`;
+                });
+                roomList += `</optgroup ">`;
+            });
+
+            var PortIsActiveChecked = "";
+            if (port.IsActive) {
+                PortIsActiveChecked = "checked";
+            }
+
+            var PortIsConnectedChecked = "";
+            if (port.IsConnected) {
+                PortIsConnectedChecked = "checked";
+            }
+
+
+            $("#SettingsDetail .form").empty().append(`
+    <div class="form-group">
+    <label for="name">Serienummer</label>
+    <input type="text" class="form-control" name="portSerialCode" value="` + port.SerialCode + `" id="portSerialCode">
+    </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="PortIsActive" `+ PortIsActiveChecked +`>
+    <label class="form-check-label" for="PortIsActive" >Er forbundet til internettet</label>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="PortIsConnected" `+ PortIsConnectedChecked +`>
+    <label class="form-check-label" for="PortIsConnected" >Er forbundet til enhed</label>
+  </div>
+  <div class="form-group">
+    <label for="section">Lokale</label>
+    <select class="form-control" id="PortAssociatedRoom" name="PortAssociatedRoom">
+            ` + roomList + `
+    </select>
+  </div>
+    `);
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+
+}
+
+
+$('#SettingsDetail').on('click', '#saveRoom', function () {
     $(this).prop("disabled", true);
     $.ajax({
         url: apiUrl + 'Rooms/' + $(this).data("id"),
         type: 'GET',
         dataType: 'json',
         success: function (room) {
+            updatedRoom = new Room;
+            updatedRoom.Id = room.Id;
+            updatedRoom.Name = $("#roomName").val();
+            updatedRoom.Section = $("#section").children("option:selected").val();
 
-            alert("Room" + room.Name);
-            room.Name = $("#roomName").val();
-            room.Section = $("#section").children("option:selected").val();
-            UpdateRoom(room);
+            UpdateRoom(updatedRoom);
+            //console.log(updatedRoom);
+            getSectionList();
+            PrepareSettings();
 
 
         },
@@ -289,6 +396,111 @@ $('#SettingsDetail').on('click', '#save', function () {
     });
     $(this).prop("disabled", false);
 });
+
+$('#SettingsDetail').on('click', '#deleteRoom', function () {
+    $(this).prop("disabled", true);
+    if (confirm("Vil du virkelig slette dette rum?")) {
+        $.ajax({
+            url: apiUrl + 'Rooms/' + $(this).data("id"),
+            type: 'Delete',
+            dataType: 'json',
+            success: function (room) {
+                getSectionList();
+                PrepareSettings();
+            },
+            error: function (request, message, error) {
+                handleException(request, message, error);
+            }
+        
+        });
+    }
+    $(this).prop("disabled", false);
+});
+
+$('#SettingsDetail').on('click', '#savePort', function () {
+    $(this).prop("disabled", true);
+    $.ajax({
+        url: apiUrl + 'Ports/' + $(this).data("id"),
+        type: 'GET',
+        dataType: 'json',
+        success: function (port) {
+            updatedPort = new Port;
+            updatedPort.Id = port.Id;
+            updatedPort.SerialCode = $("#portSerialCode").val();
+            updatedPort.IsActive = $('#PortIsActive').is(":checked");
+            updatedPort.IsConnected = $('#PortIsConnected').is(":checked");
+            updatedPort.AssociatedRoom = $("#PortAssociatedRoom optgroup").children("option:selected").val();
+
+            UpdatePort(updatedPort);
+            //console.log(updatedPort);
+            getSectionList();
+            PrepareSettings();
+
+
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+    $(this).prop("disabled", false);
+});
+
+$('#SettingsDetail').on('click', '#deletePort', function () {
+    $(this).prop("disabled", true);
+    if (confirm("Vil du virkelig slette denne port?")) {
+        $.ajax({
+            url: apiUrl + 'Ports/' + $(this).data("id"),
+            type: 'Delete',
+            dataType: 'json',
+            success: function (room) {
+                getSectionList();
+                PrepareSettings();
+            },
+            error: function (request, message, error) {
+                handleException(request, message, error);
+            }
+
+        });
+    }
+    $(this).prop("disabled", false);
+});
+
+$('#CreateRoomPage').click(function () {
+    cleanSettingsDetail();
+
+
+    MakeRoomForm();
+    $("#SettingsDetail .title").text("Opret lokale");
+    $("#SettingsDetail .buttons").append(`<button type="button" id="createRoom" class="btn btn-primary">Opret</button>`);
+});
+
+$('#SettingsDetail').on('click', '#createRoom', function () {
+    room = new Room();
+    room.Name = $("#roomName").val();
+    room.Section = $("#section").children("option:selected").val();
+    CreateRoom(room);
+    getSectionList();
+    PrepareSettings();
+});
+
+function CreateRoom(room) {
+    // Call Web API to get a list of Employees  
+    $.ajax({
+        url: apiUrl + 'Rooms',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        data: JSON.stringify(room),
+        success: function (sections) {
+
+            alert(room.Name + " blev oprettet");
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
 
 function UpdateRoom(room) {
     // Call Web API to get a list of Employees  
@@ -301,6 +513,24 @@ function UpdateRoom(room) {
         success: function (sections) {
 
             alert(room.Name + " blev opdateret");
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
+
+function UpdatePort(port) {
+    // Call Web API to get a list of Employees  
+    $.ajax({
+        url: apiUrl + 'Ports/' + port.Id,
+        type: 'PUT',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(port),
+        success: function (sections) {
+
+            alert(port.SerialCode + " blev opdateret");
         },
         error: function (request, message, error) {
             handleException(request, message, error);
