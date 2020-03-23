@@ -31,7 +31,9 @@
 
         </div>
     </div>
-
+    <div class="settingsbtn" onclick="openSettings();">
+       <i class="fas fa-cog"></i> Indstilinger
+    </div>
     <div class="container" id="mainSection">
 
 
@@ -130,8 +132,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="CreateRoomPage" >Opret lokale</button>
                     <button type="button" class="btn btn-success" id="CreatePortPage" >Opret port</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -143,23 +143,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="errorModalLabel">Der optod en fejl</h5>
-                </div>
-                <div class="modal-body">
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="location.reload();">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="portModal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="portModalLabel">Port </h5>
                 </div>
                 <div class="modal-body">
 
