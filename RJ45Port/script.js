@@ -5,15 +5,16 @@ var Section = {
     Name: "",
     Rooms: [{ Room }],
 }
+
 function Room(id = 0, name = "", section = 0, ports = null, section1 = null) {
     this.Id = id;
-    this.Name = name; 
+    this.Name = name;
     this.Section = section;
     this.Ports = ports;
     this.Section1 = section1;
 };
 
-function Port(id = 0, SerialCode = "", IsActive = false, IsConnected = false, AssociatedRoom = 0, room = null){
+function Port(id = 0, SerialCode = "", IsActive = false, IsConnected = false, AssociatedRoom = 0, room = null) {
     this.Id = id;
     this.SerialCode = SerialCode;
     this.IsActive = IsActive;
@@ -29,11 +30,14 @@ function handleException(request, message, error) {
     $('#errorModal').modal('show');
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     getSectionList();
+});
+
+function openSettings() {
     PrepareSettings();
     $('#settingsModal').modal('show');
-});
+}
 
 function getSectionList() {
     // Call Web API to get a list of Employees  
@@ -41,11 +45,11 @@ function getSectionList() {
         url: apiUrl + 'Sections/',
         type: 'GET',
         dataType: 'json',
-        success: function (sections) {
+        success: function(sections) {
             console.log(sections);
             UpdateDisplaySections(sections);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -91,11 +95,11 @@ function UpdatePortRoomgetRoom(roomId) {
         url: apiUrl + 'Rooms/' + roomId,
         type: 'GET',
         dataType: 'json',
-        success: function (room) {
+        success: function(room) {
 
             PrepareRoomPageCreatePort(room);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -106,49 +110,187 @@ function PrepareRoomPageCreatePort(room) {
     $("#port-title").text(room.Name);
     console.log(room);
     var output = "";
+    $("#ports").empty();
     if (room.Ports.length != 0) {
         room.Ports.forEach(port => {
 
             if (port.IsActive) {
                 var status = "connected";
-                var statusText = `<i class="fas fa-check"></i> Forbundet`;
+                var statusText = `<i class="fas fa-check"></i> Forbundet til krydsfelt`;
+                var IsActiveChecked = "checked";
             } else {
                 var status = "disconnected";
-                var statusText = `<i class="fas fa-times"></i> Ikke forbundet`;
+                var statusText = `<i class="fas fa-times"></i> Ikke forbundet til krydsfelt`;
+                var IsActiveChecked = "";
             }
 
-            output += `
+            if (port.IsConnected) {
+                var devicestatus = "device-connected";
+                var IsConnectedChecked = "checked";
+            } else {
+                var devicestatus = "device-disconnected";
+                var IsConnectedChecked = "";
+            }
+
+            $("#ports").append(`
             <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="ccard port ` + status + `" data-port-id="` + port.Id + `">
+            <div class="ccard port ` + status + ` ` + devicestatus + `" data-port-id="` + port.Id + `">
                 <i class="side fad fa-ethernet"></i>
                 <h5>Port</h5>
                 <h4>` + port.SerialCode + `</h4>
                 <div class="status">
-                    <p>` + statusText + `</p>
-    
+                    <p class="status-text">` + statusText + `</p>
+                    <div class="portbuttons">
+                    <div class="row">
+                    <div class="col">
+                    <div class="row">
+                    <div class="col-4">
+                    <input type="checkbox" class="PortIsActiveSwitch" data-port-id="` + port.Id + `" ` + IsActiveChecked + ` id="PortIsActiveSwitch` + port.Id + `" data-toggle="toggle" data-size="xs">
+                    </div>
+                    <div class="col">
+                    <p>Krydsfelt</p>
+                    </div>
+                    </div>
+                    </div>
+                    <div class="col">
+                    <div class="row">
+                    <div class="col-4">
+                    <input type="checkbox" class="PortIsConnectedSwitch" data-port-id="` + port.Id + `" ` + IsConnectedChecked + ` id="PortIsConnectedSwitch` + port.Id + `" data-toggle="toggle" data-size="xs">
+                    </div>
+                    <div class="col">
+                    <p>Enhed</p>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>`
+        </div>`);
+            $('#PortIsConnectedSwitch' + port.Id).bootstrapToggle();
+            $('#PortIsActiveSwitch' + port.Id).bootstrapToggle();
         });
+
+
     } else {
-        output += `
+        $("#ports").append(`
         <div class="col-md-12">
             <h4 class="text-center empty">Der er ingen porte i lokalet!</h4>
-    </div>`
+    </div>`)
     }
 
-    $("#ports").empty().append(output);
+
+
     $(".port-container").addClass("open");
 };
 
 
 
-$('#mainSection').on('click', '.room', function () {
+$('#mainSection').on('click', '.room', function() {
     UpdatePortRoomgetRoom($(this).data("room-id"));
 });
 
-$("#port-close").click(function () {
+
+
+
+
+$('.port-container').on('click', '.port', function(e) {
+
+    if ($(this).hasClass("open")) {
+        if (e.target.closest(".portbuttons") === null) {
+            $(this).removeClass("open");
+        }
+    } else {
+        $(".port.open").removeClass("open");
+        $(this).addClass("open");
+    }
+
+});
+
+$(document).on('click', '.port-container', function(e) {
+    if (e.target.closest(".port") === null) {
+        $(".port.open").removeClass("open");
+    }
+});
+
+
+$("#port-close").click(function() {
     $(".port-container").removeClass("open");
+});
+
+
+
+$(".port-container").on('change', '.PortIsActiveSwitch', function(e) {
+    var container = $(this);
+    $.ajax({
+        url: apiUrl + 'Ports/' + $(container).data("port-id"),
+        type: 'GET',
+        dataType: 'json',
+        success: function(port) {
+            port.IsActive = $(container).is(":checked");
+            $.ajax({
+                url: apiUrl + 'Ports/' + port.Id,
+                type: 'PUT',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(port),
+                success: function(portny) {
+
+
+                    if ($(container).is(":checked")) {
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("connected").removeClass("disconnected");
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(`<i class="fas fa-check"></i> Forbundet`);
+                    } else {
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("disconnected").removeClass("connected");
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(`<i class="fas fa-times"></i> Ikke forbundet`);
+
+                    }
+                },
+                error: function(request, message, error) {
+                    handleException(request, message, error);
+                }
+            });
+        },
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+});
+
+$(".port-container").on('change', '.PortIsConnectedSwitch', function(e) {
+    var container = $(this);
+    $.ajax({
+        url: apiUrl + 'Ports/' + $(container).data("port-id"),
+        type: 'GET',
+        dataType: 'json',
+        success: function(port) {
+            port.IsConnected = $(container).is(":checked");
+            $.ajax({
+                url: apiUrl + 'Ports/' + port.Id,
+                type: 'PUT',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(port),
+                success: function(portny) {
+
+
+                    if ($(container).is(":checked")) {
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("device-connected").removeClass("device-disconnected");
+                    } else {
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("device-disconnected").removeClass("device-connected");
+                    }
+                },
+                error: function(request, message, error) {
+                    handleException(request, message, error);
+                }
+            });
+        },
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+
+
+
 });
 
 
@@ -159,11 +301,11 @@ function PrepareSettings(roomId) {
         url: apiUrl + 'Sections/',
         type: 'GET',
         dataType: 'json',
-        success: function (sections) {
+        success: function(sections) {
 
             RenderSettings(sections);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -216,12 +358,12 @@ function cleanSettingsDetail() {
 
 
 
-$('#SettingsMaster').on('click', '.list-group-item', function () {
+$('#SettingsMaster').on('click', '.list-group-item', function() {
     $("#SettingsMaster .active").removeClass("active");
     $(this).addClass("active");
 });
 
-$('#SettingsMaster').on('click', '.settingsRoom', function () {
+$('#SettingsMaster').on('click', '.settingsRoom', function() {
     editRoomSetup($(this).data("room-id"));
 });
 
@@ -232,19 +374,19 @@ function editRoomSetup(roomId) {
         url: apiUrl + 'Rooms/' + roomId,
         type: 'GET',
         dataType: 'json',
-        success: function (rooms) {
+        success: function(rooms) {
             $("#SettingsDetail .title").text("Rediger " + rooms.Name);
             $("#SettingsDetail .buttons").empty().append(`<button type="button" id="saveRoom" data-id="` + rooms.Id + `" class="btn btn-primary">Opdater</button><button type="button" id="deleteRoom" data-id="` + rooms.Id + `" class="btn btn-danger">Slet</button>`)
 
             MakeRoomForm(rooms);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
 }
 
-$('#SettingsMaster').on('click', '.settingsPort', function () {
+$('#SettingsMaster').on('click', '.settingsPort', function() {
     editPortSetup($(this).data("port-id"));
 });
 
@@ -255,13 +397,13 @@ function editPortSetup(portId) {
         url: apiUrl + 'Ports/' + portId,
         type: 'GET',
         dataType: 'json',
-        success: function (port) {
+        success: function(port) {
             $("#SettingsDetail .title").text("Rediger " + port.SerialCode);
             $("#SettingsDetail .buttons").empty().append(`<button type="button" id="savePort" data-id="` + port.Id + `" class="btn btn-primary">Opdater</button><button type="button" id="deletePort" data-id="` + port.Id + `" class="btn btn-danger">Slet</button>`)
 
             MakePortForm(port);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -273,7 +415,7 @@ function MakeRoomForm(room = new Room(0, "")) {
         url: apiUrl + 'Sections/',
         type: 'GET',
         dataType: 'json',
-        success: function (section) {
+        success: function(section) {
 
             var sections = section;
             console.log(sections);
@@ -301,7 +443,7 @@ function MakeRoomForm(room = new Room(0, "")) {
   </div>
     `);
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -314,13 +456,13 @@ function MakePortForm(port = new Port()) {
         url: apiUrl + 'Sections/',
         type: 'GET',
         dataType: 'json',
-        success: function (section) {
+        success: function(section) {
 
             var sections = section;
             console.log(sections);
             var roomList = ""
             sections.forEach(section => {
-                roomList += `<optgroup label="`+section.Name+`">`
+                roomList += `<optgroup label="` + section.Name + `">`
                 section.Rooms.forEach(room => {
                     var selected = "";
                     if (room.Id == port.AssociatedRoom) {
@@ -348,12 +490,13 @@ function MakePortForm(port = new Port()) {
     <input type="text" class="form-control" name="portSerialCode" value="` + port.SerialCode + `" id="portSerialCode">
     </div>
   <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="PortIsActive" `+ PortIsActiveChecked +`>
-    <label class="form-check-label" for="PortIsActive" >Er forbundet til internettet</label>
+    <input type="checkbox" class="form-check-input"  id="PortIsActive" ` + PortIsActiveChecked + `>
+    <label class="form-check-label"  for="PortIsActive" >Forbundet til krydsfeltet</label>
   </div>
+  <br>
   <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="PortIsConnected" `+ PortIsConnectedChecked +`>
-    <label class="form-check-label" for="PortIsConnected" >Er forbundet til enhed</label>
+    <input type="checkbox" class="form-check-input" id="PortIsConnected" ` + PortIsConnectedChecked + `>
+    <label class="form-check-label" for="PortIsConnected" >Forbundet til enhed</label>
   </div>
   <div class="form-group">
     <label for="section">Lokale</label>
@@ -362,8 +505,14 @@ function MakePortForm(port = new Port()) {
     </select>
   </div>
     `);
+            $('#PortIsConnected').bootstrapToggle({
+                size: 'sm',
+            });
+            $('#PortIsActive').bootstrapToggle({
+                size: 'sm',
+            });
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -371,13 +520,13 @@ function MakePortForm(port = new Port()) {
 }
 
 
-$('#SettingsDetail').on('click', '#saveRoom', function () {
+$('#SettingsDetail').on('click', '#saveRoom', function() {
     $(this).prop("disabled", true);
     $.ajax({
         url: apiUrl + 'Rooms/' + $(this).data("id"),
         type: 'GET',
         dataType: 'json',
-        success: function (room) {
+        success: function(room) {
             updatedRoom = new Room;
             updatedRoom.Id = room.Id;
             updatedRoom.Name = $("#roomName").val();
@@ -387,43 +536,43 @@ $('#SettingsDetail').on('click', '#saveRoom', function () {
             //console.log(updatedRoom);
             getSectionList();
             PrepareSettings();
-
+            SettingsMasterSelectRoom(room);
 
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
     $(this).prop("disabled", false);
 });
 
-$('#SettingsDetail').on('click', '#deleteRoom', function () {
+$('#SettingsDetail').on('click', '#deleteRoom', function() {
     $(this).prop("disabled", true);
     if (confirm("Vil du virkelig slette dette rum?")) {
         $.ajax({
             url: apiUrl + 'Rooms/' + $(this).data("id"),
             type: 'Delete',
             dataType: 'json',
-            success: function (room) {
+            success: function(room) {
                 getSectionList();
                 PrepareSettings();
             },
-            error: function (request, message, error) {
+            error: function(request, message, error) {
                 handleException(request, message, error);
             }
-        
+
         });
     }
     $(this).prop("disabled", false);
 });
 
-$('#SettingsDetail').on('click', '#savePort', function () {
+$('#SettingsDetail').on('click', '#savePort', function() {
     $(this).prop("disabled", true);
     $.ajax({
         url: apiUrl + 'Ports/' + $(this).data("id"),
         type: 'GET',
         dataType: 'json',
-        success: function (port) {
+        success: function(port) {
             updatedPort = new Port;
             updatedPort.Id = port.Id;
             updatedPort.SerialCode = $("#portSerialCode").val();
@@ -438,25 +587,25 @@ $('#SettingsDetail').on('click', '#savePort', function () {
 
 
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
     $(this).prop("disabled", false);
 });
 
-$('#SettingsDetail').on('click', '#deletePort', function () {
+$('#SettingsDetail').on('click', '#deletePort', function() {
     $(this).prop("disabled", true);
     if (confirm("Vil du virkelig slette denne port?")) {
         $.ajax({
             url: apiUrl + 'Ports/' + $(this).data("id"),
             type: 'Delete',
             dataType: 'json',
-            success: function (room) {
+            success: function(room) {
                 getSectionList();
                 PrepareSettings();
             },
-            error: function (request, message, error) {
+            error: function(request, message, error) {
                 handleException(request, message, error);
             }
 
@@ -465,16 +614,32 @@ $('#SettingsDetail').on('click', '#deletePort', function () {
     $(this).prop("disabled", false);
 });
 
-$('#CreateRoomPage').click(function () {
+$('#CreateRoomPage').click(function() {
     cleanSettingsDetail();
-
-
     MakeRoomForm();
     $("#SettingsDetail .title").text("Opret lokale");
     $("#SettingsDetail .buttons").append(`<button type="button" id="createRoom" class="btn btn-primary">Opret</button>`);
 });
 
-$('#SettingsDetail').on('click', '#createRoom', function () {
+$('#CreatePortPage').click(function() {
+    cleanSettingsDetail();
+    MakePortForm();
+    $("#SettingsDetail .title").text("Opret port");
+    $("#SettingsDetail .buttons").append(`<button type="button" id="createPort" class="btn btn-primary">Opret</button>`);
+});
+
+$('#SettingsDetail').on('click', '#createPort', function() {
+    var port = new Port;
+    port.Id = port.Id;
+    port.SerialCode = $("#portSerialCode").val();
+    port.IsActive = $('#PortIsActive').is(":checked");
+    port.IsConnected = $('#PortIsConnected').is(":checked");
+    port.AssociatedRoom = $("#PortAssociatedRoom optgroup").children("option:selected").val();
+    CreatePort(port);
+    PrepareSettings();
+});
+
+$('#SettingsDetail').on('click', '#createRoom', function() {
     room = new Room();
     room.Name = $("#roomName").val();
     room.Section = $("#section").children("option:selected").val();
@@ -492,11 +657,30 @@ function CreateRoom(room) {
         contentType: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
         data: JSON.stringify(room),
-        success: function (sections) {
+        success: function(sections) {
 
-            alert(room.Name + " blev oprettet");
+            $.jGrowl(room.Name + " blev oprettet");
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
+
+function CreatePort(port) {
+    // Call Web API to get a list of Employees  
+    $.ajax({
+        url: apiUrl + 'Ports',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        data: JSON.stringify(port),
+        success: function(sections) {
+
+            $.jGrowl(port.SerialCode + " blev oprettet");
+        },
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -510,11 +694,11 @@ function UpdateRoom(room) {
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(room),
-        success: function (sections) {
+        success: function(sections) {
 
-            alert(room.Name + " blev opdateret");
+            $.jGrowl(room.Name + " blev opdateret");
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });
@@ -528,11 +712,11 @@ function UpdatePort(port) {
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(port),
-        success: function (sections) {
+        success: function(sections) {
 
-            alert(port.SerialCode + " blev opdateret");
+            $.jGrowl(port.SerialCode + " blev opdateret");
         },
-        error: function (request, message, error) {
+        error: function(request, message, error) {
             handleException(request, message, error);
         }
     });

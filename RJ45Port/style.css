@@ -1,5 +1,4 @@
 ﻿@import url("https://use.typekit.net/aro8mnx.css");
-
 body {
     background-color: #F0F4F8;
     font-family: "proxima-nova", sans-serif;
@@ -16,17 +15,16 @@ body {
     color: #fff;
 }
 
-    .loader.close {
-        animation-name: removeLoader;
-        animation-fill-mode: forwards;
-        animation-duration: 0.5s;
-    }
+.loader.close {
+    animation-name: removeLoader;
+    animation-fill-mode: forwards;
+    animation-duration: 0.5s;
+}
 
 @keyframes removeLoader {
     0% {
         opacity: 1;
     }
-
     100% {
         opacity: 0;
         display: none;
@@ -60,99 +58,98 @@ body {
     height: 80px;
 }
 
-    .lds-roller div {
-        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        transform-origin: 40px 40px;
-    }
+.lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+}
 
-        .lds-roller div:after {
-            content: " ";
-            display: block;
-            position: absolute;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #fff;
-            margin: -4px 0 0 -4px;
-        }
+.lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    margin: -4px 0 0 -4px;
+}
 
-        .lds-roller div:nth-child(1) {
-            animation-delay: -0.036s;
-        }
+.lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+}
 
-            .lds-roller div:nth-child(1):after {
-                top: 63px;
-                left: 63px;
-            }
+.lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+}
 
-        .lds-roller div:nth-child(2) {
-            animation-delay: -0.072s;
-        }
+.lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+}
 
-            .lds-roller div:nth-child(2):after {
-                top: 68px;
-                left: 56px;
-            }
+.lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+}
 
-        .lds-roller div:nth-child(3) {
-            animation-delay: -0.108s;
-        }
+.lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+}
 
-            .lds-roller div:nth-child(3):after {
-                top: 71px;
-                left: 48px;
-            }
+.lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+}
 
-        .lds-roller div:nth-child(4) {
-            animation-delay: -0.144s;
-        }
+.lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+}
 
-            .lds-roller div:nth-child(4):after {
-                top: 72px;
-                left: 40px;
-            }
+.lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+}
 
-        .lds-roller div:nth-child(5) {
-            animation-delay: -0.18s;
-        }
+.lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+}
 
-            .lds-roller div:nth-child(5):after {
-                top: 71px;
-                left: 32px;
-            }
+.lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+}
 
-        .lds-roller div:nth-child(6) {
-            animation-delay: -0.216s;
-        }
+.lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+}
 
-            .lds-roller div:nth-child(6):after {
-                top: 68px;
-                left: 24px;
-            }
+.lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+}
 
-        .lds-roller div:nth-child(7) {
-            animation-delay: -0.252s;
-        }
+.lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+}
 
-            .lds-roller div:nth-child(7):after {
-                top: 63px;
-                left: 17px;
-            }
+.lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+}
 
-        .lds-roller div:nth-child(8) {
-            animation-delay: -0.288s;
-        }
+.lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+}
 
-            .lds-roller div:nth-child(8):after {
-                top: 56px;
-                left: 12px;
-            }
+.lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+}
 
 @keyframes lds-roller {
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
@@ -173,85 +170,117 @@ body {
     cursor: pointer;
 }
 
-    .ccard.port {
-        padding-bottom: 60px;
-    }
+.ccard.port {
+    padding-bottom: 60px;
+}
 
-    .ccard h5 {
-        color: #334E68;
-        font-size: 15px;
-        margin: 0px;
-    }
+.ccard h5 {
+    color: #334E68;
+    font-size: 15px;
+    margin: 0px;
+}
 
-    .ccard.room h4 {
-        color: #102A43;
-        font-size: 30px;
-    }
+.ccard.room h4 {
+    color: #102A43;
+    font-size: 30px;
+}
 
-    .ccard.port h4 {
-        color: #102A43;
-        font-size: 20px;
-        z-index: 2;
-    }
+.ccard.port h4 {
+    color: #102A43;
+    font-weight: 600;
+    font-size: 20px;
+    z-index: 2;
+    transition: 0.1s;
+}
 
-    .ccard .side {
-        position: absolute;
-        right: -10px;
-        top: -20px;
-        font-size: 130px;
-        color: rgba(0, 0, 0, 0.04);
-        transition: 0.1s;
-    }
+.ccard.port.open h4 {
+    transform: translateY(-30px);
+}
 
-    .ccard.port .side {
-        right: 15px;
-        top: 5px;
-        font-size: 70px;
-        color: rgba(0, 0, 0, 0.5);
-    }
+.ccard.port h5 {
+    opacity: 100;
+    transition: 0.1s;
+}
 
-    .ccard.port.disconnected .side {
-        color: rgba(0, 0, 0, 0.1);
-    }
+.ccard.port.open h5 {
+    opacity: 0;
+}
 
-    .ccard .status {
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
-        width: 100%;
-        height: 35px;
-        background-color: seagreen;
-        padding: 5px;
-        text-align: center;
-        transition: 0.1s;
-    }
+.ccard .side {
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-size: 130px;
+    color: rgba(0, 0, 0, 0.04);
+    transition: 0.1s;
+}
 
-    .ccard.port.open .status {
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
-        width: 50%;
-        height: 100%;
-        background-color: seagreen;
-        padding: 5px;
-        text-align: right;
-        z-index: 1;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+.ccard.port .side {
+    right: 15px;
+    top: 5px;
+    font-size: 70px;
+    color: rgba(0, 0, 0, 0.5);
+    transition: 0.1s;
+}
 
-    .ccard.port.disconnected .status {
-        background-color: #D9E2EC;
-    }
+.ccard.port.open .side {
+    right: 15px;
+    top: 10px;
+    font-size: 40px;
+}
 
-    .ccard .status p {
-        margin: 0px;
-        font-size: 15px;
-        color: #fff;
-    }
+.ccard.port.device-disconnected .side {
+    color: rgba(0, 0, 0, 0.1);
+}
 
-    .ccard.port.disconnected .status p {
-        color: #243B53;
-    }
+.ccard .status {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+    height: 35px;
+    background-color: seagreen;
+    padding: 5px;
+    text-align: center;
+    transition: 0.1s;
+}
+
+.ccard.port.open .status {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+    height: 80px;
+    background-color: seagreen;
+    padding: 5px;
+    z-index: 1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ccard.port.disconnected .status {
+    background-color: #D9E2EC;
+}
+
+.ccard .status p {
+    margin: 0px;
+    font-weight: 300;
+    font-size: 15px;
+    color: #fff;
+}
+
+.ccard .status .portbuttons {
+    margin-top: 10px;
+    padding: 0px 15px;
+}
+
+.ccard .status .portbuttons p {
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.ccard.port.disconnected .status p {
+    color: #243B53;
+}
 
 .status span.dot {
     min-height: 10px;
@@ -272,7 +301,7 @@ body {
 
 .port-container {
     background-color: #F0F4F8;
-    position: absolute;
+    position: fixed;
     top: 0px;
     left: 0px;
     width: 100%;
@@ -280,9 +309,9 @@ body {
     display: none;
 }
 
-    .port-container.open {
-        display: block;
-    }
+.port-container.open {
+    display: block;
+}
 
 #port-close {
     font-size: 30px;
@@ -296,37 +325,37 @@ body {
     margin-bottom: 50px;
 }
 
-    .title-row h2 {
-        color: #fff;
-        vertical-align: middle;
-        font-weight: 500;
-    }
+.title-row h2 {
+    color: #fff;
+    vertical-align: middle;
+    font-weight: 500;
+}
 
 .list-group.list-group-root {
     padding: 0;
     overflow: hidden;
 }
 
-    .list-group.list-group-root .list-group {
-        margin-bottom: 0;
-    }
+.list-group.list-group-root .list-group {
+    margin-bottom: 0;
+}
 
-    .list-group.list-group-root .list-group-item {
-        border-radius: 0;
-        border-width: 1px 0 0 0;
-    }
+.list-group.list-group-root .list-group-item {
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+}
 
-    .list-group.list-group-root > .list-group-item:first-child {
-        border-top-width: 0;
-    }
+.list-group.list-group-root>.list-group-item:first-child {
+    border-top-width: 0;
+}
 
-    .list-group.list-group-root > .list-group > .list-group-item {
-        padding-left: 30px;
-    }
+.list-group.list-group-root>.list-group>.list-group-item {
+    padding-left: 30px;
+}
 
-    .list-group.list-group-root > .list-group > .list-group > .list-group-item {
-        padding-left: 45px;
-    }
+.list-group.list-group-root>.list-group>.list-group>.list-group-item {
+    padding-left: 45px;
+}
 
 .list-group-item .glyphicon {
     margin-right: 5px;
