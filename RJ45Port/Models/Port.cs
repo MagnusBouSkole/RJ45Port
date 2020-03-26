@@ -20,6 +20,8 @@ namespace RJ45Port
 
         public int AssociatedRoom { get; set; }
 
+        public string Description { get; set; }
+
         public virtual Room Room { get; set; }
     }
 }

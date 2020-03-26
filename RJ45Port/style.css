@@ -1,4 +1,9 @@
 ﻿@import url("https://use.typekit.net/aro8mnx.css");
+:root {
+    --light: 80;
+    --threshold: 60;
+}
+
 body {
     background-color: #F0F4F8;
     font-family: "proxima-nova", sans-serif;
@@ -168,10 +173,6 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-#mainSection {
-    margin-top: 50px;
-}
-
 .ccard {
     position: relative;
     background-color: #fff;
@@ -183,6 +184,11 @@ body {
     transition: 0.1s;
     cursor: pointer;
 }
+
+
+/*.ccard.room {
+    border-top: 3px solid #334E68;
+} */
 
 .ccard.port {
     padding-bottom: 60px;
@@ -315,12 +321,13 @@ body {
 
 .port-container {
     background-color: #F0F4F8;
-    position: fixed;
+    position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;
-    height: 100%;
+    height: 1000vh;
     display: none;
+    transition: all 0.5s;
 }
 
 .port-container.open {
@@ -331,9 +338,12 @@ body {
     font-size: 30px;
     vertical-align: middle;
     cursor: pointer;
+    text-align: right;
 }
 
 .title-row {
+    position: relative;
+    background-image: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
     background-color: #003E6B;
     padding: 40px 0px;
     margin-bottom: 50px;
@@ -342,7 +352,15 @@ body {
 .title-row h2 {
     color: #fff;
     vertical-align: middle;
-    font-weight: 500;
+    font-weight: 300;
+    font-size: 45px;
+}
+
+.title-row .roomTitle {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
 }
 
 .list-group.list-group-root {
@@ -373,4 +391,124 @@ body {
 
 .list-group-item .glyphicon {
     margin-right: 5px;
+}
+
+.search-container {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    background-color: #D9E2EC;
+}
+
+.search-container .top {
+    background-color: #003E6B;
+    height: 100%;
+    position: relative;
+}
+
+.search-container .icon {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    font-size: 400px;
+    opacity: 60%;
+    color: #fff;
+}
+
+.search-container #search {
+    transform: scale(2);
+}
+
+.roomcover {
+    position: relative;
+    height: 170px;
+    width: 100%;
+    background-image: linear-gradient(90deg, #9ebd13 0%, #008552 100%);
+    background-color: #243B53;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.roomcover .info .container {
+    position: relative;
+}
+
+.roomcover .info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(4px);
+}
+
+.roomcover .logo {
+    position: absolute;
+    top: 20px;
+    left: 15px;
+}
+
+.roomcover .icon {
+    position: absolute;
+    top: 20px;
+    left: 15px;
+    font-size: 60px;
+    color: #fff;
+}
+
+.roomcover .logo img {
+    max-height: 75px;
+}
+
+.roomcover .name {
+    position: absolute;
+    top: 100px;
+    left: 15px;
+}
+
+.roomcover .name h2 {
+    color: #fff;
+}
+
+.drag-up {
+    margin-top: -20px;
+    margin-bottom: 70px;
+}
+
+.drag-up .empty {
+    margin-top: 60px;
+}
+
+.sidelogo {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 40%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.title-row.hasCover .blur {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(4px);
+}
+
+.title-row.hasCover {
+    background-position: center;
+    background-size: cover;
+}
+
+.ports {
+    overflow-y: scroll;
+    height: 60vh;
 }

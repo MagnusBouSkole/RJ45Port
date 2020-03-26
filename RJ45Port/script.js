@@ -1,26 +1,33 @@
-﻿var apiUrl = "https://localhost:44345/api/";
+﻿//var apiUrl = "https://localhost:44345/api/";
+var apiUrl = "/api/";
 
-var Section = {
-    Id: 0,
-    Name: "",
-    Rooms: [{ Room }],
-}
-
-function Room(id = 0, name = "", section = 0, ports = null, section1 = null) {
+function Section(id = 0, name = "", icon = null, cover = null, logo = null) {
     this.Id = id;
     this.Name = name;
-    this.Section = section;
-    this.Ports = ports;
-    this.Section1 = section1;
+    this.Icon = icon;
+    this.Cover = cover;
+    this.Logo = logo;
 };
 
-function Port(id = 0, SerialCode = "", IsActive = false, IsConnected = false, AssociatedRoom = 0, room = null) {
+function Room(id = 0, name = "", AssociatedSection = 0, icon = null, cover = null, logo = null, ports = null, section = null) {
+    this.Id = id;
+    this.Name = name;
+    this.AssociatedSection = AssociatedSection;
+    this.Ports = ports;
+    this.section = section;
+    this.Icon = icon;
+    this.Cover = cover;
+    this.Logo = logo;
+};
+
+function Port(id = 0, SerialCode = "", IsActive = false, IsConnected = false, AssociatedRoom = 0, description = null, room = null) {
     this.Id = id;
     this.SerialCode = SerialCode;
     this.IsActive = IsActive;
     this.IsConnected = IsConnected;
     this.AssociatedRoom = AssociatedRoom;
     this.room = room;
+    this.Description = description;
 };
 
 
@@ -61,26 +68,63 @@ function UpdateDisplaySections(sections) {
 
     $("#mainSection").empty();
     sections.forEach(section => {
-        var row = `<div class='row section ' data-section-id="` + section.Id + `"> 
-        <div class='col-md-12'>
+        var logoThing = "";
+        if (section.Logo) {
+            logoThing = `<div class="logo"><img class="img-fluid" src="` + section.Logo + `"></img></div>`;
+        } else if (section.Icon) {
+            logoThing = `<div class="icon"><i class="fad fa-` + section.Icon + `"></i></div>`;
+        }
+
+        var roomCoverHasImage = "";
+        var roomCoverStyle = "";
+        if (section.Cover) {
+            var roomCoverHasImage = "hasImg";
+            var roomCoverStyle = `style="background-image: url(` + section.Cover + `)"`;
+        }
+
+        var row = `<div class=' section ' data-section-id="` + section.Id + `"> 
+        <div class="row">
+        <div class="roomcover ` + roomCoverHasImage + `" ` + roomCoverStyle + ` >
+        
+        <div class="info">
+        <div class="container">
+        ` + logoThing + `
+        <div class="name">
             <h2>` + section.Name + `</h2>
-        </div>`;
+            </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="container drag-up">
+        <div class="row">
+`;
         if (section.Rooms.length != 0) {
             section.Rooms.forEach(room => {
+                var logoIcon = "";
+                if (room.Logo) {
+                    logoIcon = `<div class="sidelogo" style="background-image: url(` + room.Logo + `)"></div>`;
+                } else if (room.Icon) {
+                    logoIcon = ` <i class="side fad fa-` + room.Icon + `"></i>`;
+                }
+
                 row += `<div class="col-lg-3 col-md-4 col-sm-6">
         <div class="ccard room" data-room-id="` + room.Id + `">
-            <i class="side fad fa-compass"></i>
+        ` + logoIcon + `
+           
             <h5>Lokale</h5>
             <h4>` + room.Name + `</h4>
         </div>
-    </div>`
+        </div>
+    `
             });
         } else {
             row += `
         <div class="col-md-12">
-            <h4 class="text-center empty">Der er ingen lokaler i afdelingen!</h4>
+            <h4 class="text-center empty">Der er ingen lokaler i ` + section.Name + `!</h4>
     </div>`
         }
+        row += ` </div> `;
 
         $("#mainSection").append(row);
     });
@@ -105,8 +149,16 @@ function UpdatePortRoomgetRoom(roomId) {
     });
     return returnRoom;
 }
+var statusTextIsActiveEnabled = `<i class="fas fa-check"></i> Forbundet til krydsfelt`;
+var statusTextIsActiveDisabled = `<i class="fas fa-times"></i> Ikke forbundet til krydsfelt`;
 
 function PrepareRoomPageCreatePort(room) {
+    if (room.Cover) {
+        $(".port-container .title-row").addClass("hasCover").css(`background-image`, `url(` + room.Cover + `)`);
+    } else {
+        $(".port-container .title-row").removeClass("hasCover").css(`background-image`, ``);
+    }
+
     $("#port-title").text(room.Name);
     console.log(room);
     var output = "";
@@ -116,11 +168,11 @@ function PrepareRoomPageCreatePort(room) {
 
             if (port.IsActive) {
                 var status = "connected";
-                var statusText = `<i class="fas fa-check"></i> Forbundet til krydsfelt`;
+                var statusText = statusTextIsActiveEnabled;
                 var IsActiveChecked = "checked";
             } else {
                 var status = "disconnected";
-                var statusText = `<i class="fas fa-times"></i> Ikke forbundet til krydsfelt`;
+                var statusText = statusTextIsActiveDisabled;
                 var IsActiveChecked = "";
             }
 
@@ -138,6 +190,7 @@ function PrepareRoomPageCreatePort(room) {
                 <i class="side fad fa-ethernet"></i>
                 <h5>Port</h5>
                 <h4>` + port.SerialCode + `</h4>
+                <!--<h6>` + (port.Description || '') + `</h6>-->
                 <div class="status">
                     <p class="status-text">` + statusText + `</p>
                     <div class="portbuttons">
@@ -238,10 +291,10 @@ $(".port-container").on('change', '.PortIsActiveSwitch', function(e) {
 
                     if ($(container).is(":checked")) {
                         $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("connected").removeClass("disconnected");
-                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(`<i class="fas fa-check"></i> Forbundet`);
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(statusTextIsActiveEnabled);
                     } else {
                         $(".ccard.port[data-port-id='" + $(container).data("port-id") + "']").addClass("disconnected").removeClass("connected");
-                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(`<i class="fas fa-times"></i> Ikke forbundet`);
+                        $(".ccard.port[data-port-id='" + $(container).data("port-id") + "'] .status-text").html(statusTextIsActiveDisabled);
 
                     }
                 },
@@ -409,6 +462,52 @@ function editPortSetup(portId) {
     });
 }
 
+$('#SettingsMaster').on('click', '.settingsSection', function() {
+    editSectionSetup($(this).data("section-id"));
+});
+
+function editSectionSetup(sectionId) {
+    $("#SettingsDetail .title").text("");
+    $("#SettingsDetail .form").empty();
+    $.ajax({
+        url: apiUrl + 'Sections/' + sectionId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(section) {
+            $("#SettingsDetail .title").text("Rediger " + section.Name);
+            $("#SettingsDetail .buttons").empty().append(`<button type="button" id="saveSection" data-id="` + section.Id + `" class="btn btn-primary">Opdater</button>`)
+
+            MakeSectionForm(section);
+        },
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
+
+function MakeSectionForm(section = new Section(0, "")) {
+
+    $("#SettingsDetail .form").append(`
+    <div class="form-group">
+    <label for="name">Navn</label>
+    <input type="text" class="form-control" name="name" value="` + section.Name + `" id="sectionName">
+    </div>
+  <div class="form-group">
+  <label for="sectionIcon">Ikon</label>
+  <input type="text" class="form-control" name="Icon" value="` + (section.Icon || '') + `" id="sectionIcon">
+  </div>
+  <div class="form-group">
+  <label for="sectionLogo">Logo</label>
+  <input type="text" class="form-control" name="Logo" value="` + (section.Logo || '') + `" id="sectionLogo">
+  </div>
+  <div class="form-group">
+  <label for="sectionCover">Cover</label>
+  <input type="text" class="form-control" name="Cover" value="` + (section.Cover || '') + `" id="sectionCover">
+  </div>
+    `);
+
+}
+
 function MakeRoomForm(room = new Room(0, "")) {
 
     $.ajax({
@@ -440,6 +539,18 @@ function MakeRoomForm(room = new Room(0, "")) {
     <select class="form-control" id="section" name="section">
             ` + sectionList + `
     </select>
+  </div>
+  <div class="form-group">
+  <label for="roomIcon">Ikon</label>
+  <input type="text" class="form-control" name="Icon" value="` + (room.Icon || '') + `" id="roomIcon">
+  </div>
+  <div class="form-group">
+  <label for="roomLogo">Logo</label>
+  <input type="text" class="form-control" name="Logo" value="` + (room.Logo || '') + `" id="roomLogo">
+  </div>
+  <div class="form-group">
+  <label for="roomCover">Cover</label>
+  <input type="text" class="form-control" name="Cover" value="` + (room.Cover || '') + `" id="roomCover">
   </div>
     `);
         },
@@ -482,12 +593,16 @@ function MakePortForm(port = new Port()) {
             if (port.IsConnected) {
                 PortIsConnectedChecked = "checked";
             }
-
+            console.log(port);
 
             $("#SettingsDetail .form").empty().append(`
     <div class="form-group">
     <label for="name">Serienummer</label>
     <input type="text" class="form-control" name="portSerialCode" value="` + port.SerialCode + `" id="portSerialCode">
+    </div>
+    <div class="form-group">
+    <label for="portDescription">Beskrivelse</label>
+    <input type="text" class="form-control" name="description" value="` + (port.Description || '') + `" id="portDescription">
     </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input"  id="PortIsActive" ` + PortIsActiveChecked + `>
@@ -530,7 +645,11 @@ $('#SettingsDetail').on('click', '#saveRoom', function() {
             updatedRoom = new Room;
             updatedRoom.Id = room.Id;
             updatedRoom.Name = $("#roomName").val();
-            updatedRoom.Section = $("#section").children("option:selected").val();
+            updatedRoom.AssociatedSection = $("#section").children("option:selected").val();
+            updatedRoom.Logo = $("#roomLogo").val();
+            updatedRoom.Icon = $("#roomIcon").val();
+            updatedRoom.Cover = $("#roomCover").val();
+
 
             UpdateRoom(updatedRoom);
             //console.log(updatedRoom);
@@ -566,6 +685,34 @@ $('#SettingsDetail').on('click', '#deleteRoom', function() {
     $(this).prop("disabled", false);
 });
 
+$('#SettingsDetail').on('click', '#saveSection', function() {
+    $(this).prop("disabled", true);
+    $.ajax({
+        url: apiUrl + 'Sections/' + $(this).data("id"),
+        type: 'GET',
+        dataType: 'json',
+        success: function(section) {
+            updatedSection = new Section;
+            updatedSection.Id = section.Id;
+            updatedSection.Name = $("#sectionName").val();
+            updatedSection.Logo = $("#sectionLogo").val();
+            updatedSection.Icon = $("#sectionIcon").val();
+            updatedSection.Cover = $("#sectionCover").val();
+
+
+            UpdateSection(updatedSection);
+            //console.log(updatedRoom);
+            getSectionList();
+            PrepareSettings();
+
+        },
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+    $(this).prop("disabled", false);
+});
+
 $('#SettingsDetail').on('click', '#savePort', function() {
     $(this).prop("disabled", true);
     $.ajax({
@@ -579,6 +726,7 @@ $('#SettingsDetail').on('click', '#savePort', function() {
             updatedPort.IsActive = $('#PortIsActive').is(":checked");
             updatedPort.IsConnected = $('#PortIsConnected').is(":checked");
             updatedPort.AssociatedRoom = $("#PortAssociatedRoom optgroup").children("option:selected").val();
+            updatedPort.Description = $("#portDescription").val();
 
             UpdatePort(updatedPort);
             //console.log(updatedPort);
@@ -635,6 +783,7 @@ $('#SettingsDetail').on('click', '#createPort', function() {
     port.IsActive = $('#PortIsActive').is(":checked");
     port.IsConnected = $('#PortIsConnected').is(":checked");
     port.AssociatedRoom = $("#PortAssociatedRoom optgroup").children("option:selected").val();
+    port.Description = $("#portDescription").val();
     CreatePort(port);
     PrepareSettings();
 });
@@ -642,7 +791,10 @@ $('#SettingsDetail').on('click', '#createPort', function() {
 $('#SettingsDetail').on('click', '#createRoom', function() {
     room = new Room();
     room.Name = $("#roomName").val();
-    room.Section = $("#section").children("option:selected").val();
+    room.AssociatedSection = $("#section").children("option:selected").val();
+    room.Logo = $("#roomLogo").val();
+    room.Icon = $("#roomIcon").val();
+    room.Cover = $("#roomCover").val();
     CreateRoom(room);
     getSectionList();
     PrepareSettings();
@@ -679,6 +831,24 @@ function CreatePort(port) {
         success: function(sections) {
 
             $.jGrowl(port.SerialCode + " blev oprettet");
+        },
+        error: function(request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
+
+function UpdateSection(section) {
+    // Call Web API to get a list of Employees  
+    $.ajax({
+        url: apiUrl + 'Sections/' + section.Id,
+        type: 'PUT',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(section),
+        success: function(sections) {
+
+            $.jGrowl(section.Name + " blev opdateret");
         },
         error: function(request, message, error) {
             handleException(request, message, error);

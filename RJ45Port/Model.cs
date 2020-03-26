@@ -8,7 +8,7 @@ namespace RJ45Port
     public partial class Model : DbContext
     {
         public Model()
-            : base("name=ModelConnection")
+            : base("name=DBCS")
         {
         }
 
@@ -26,8 +26,8 @@ namespace RJ45Port
 
             modelBuilder.Entity<Section>()
                 .HasMany(e => e.Rooms)
-                .WithRequired(e => e.Section1)
-                .HasForeignKey(e => e.Section)
+                .WithRequired(e => e.Section)
+                .HasForeignKey(e => e.AssociatedSection)
                 .WillCascadeOnDelete(false);
         }
     }

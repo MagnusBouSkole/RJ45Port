@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/281fb08c90.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
-    <title>Hello, world!</title>
+    <title>PortAdmin</title>
 </head>
 
 <body>
@@ -34,7 +34,7 @@
     <div class="settingsbtn" onclick="openSettings();">
        <i class="fas fa-cog"></i> Indstilinger
     </div>
-    <div class="container" id="mainSection">
+    <div class="container-fluid" id="mainSection">
 
 
     </div>
@@ -42,9 +42,11 @@
     <div class="port-container">
 
         <div class="title-row">
+            <div class="blur"></div>
             <div class="container">
                 <div class="row">
                     <div class="col">
+                        <h3 class="roomTitle">Lokale</h3>
                         <h2 id="port-title"></h2>
                     </div>
                     <div class="col-2">
@@ -59,8 +61,9 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="row" id="ports">
+        <div class="container rel">
+            <div class="portscon">
+            <div class="row" id="ports" style="">
                 <div class="col-md-3">
                     <div class="ccard port connected">
                         <i class="side fad fa-ethernet"></i>
@@ -96,9 +99,25 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div></div>
 
     </div>
+
+<!--<div class="search-container">
+    <div class="icon"><i class="fad fa-search"></i></div>
+    <div class="top">
+        <div class="container">
+            <div class="col-6 mx-auto ">
+          <div class="form-group">
+    <input type="text" class="form-control" id="search" placeholder="Søg!">
+  </div>
+  </div>
+  </div>
+    </div>
+
+</div> -->
+
+
     <div class="modal fade" id="settingsModal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
